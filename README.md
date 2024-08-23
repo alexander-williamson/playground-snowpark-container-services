@@ -2,9 +2,24 @@
 
 Connectivity to snowpark container services
 
+This builds off information in [Tutorial 1][1]
+
 ## Setup
 
-Create an application:
+### Build and push the docker app
+
+Build the docker app and push it up to the repository (note `/app` is the folder name):
+
+```
+cd docker-python-app
+IMAGE_NAME=EXAMPLE.registry.snowflakecomputing.com/tutorial_db/alex_test_data_schema/tutorial_repository/my_echo_service:latest
+docker build ./app --rm --platform linux/amd64 -t $IMAGE_NAME
+docker push $IMAGE_NAME
+```
+
+### Create the Snowpark Container Services Service and expose an endpoint
+
+Create an application (there is an assumption that you created a schema, warehouse and role with enough permissions):
 
 ```sql
 DESCRIBE COMPUTE POOL tutorial_compute_pool;
@@ -43,7 +58,7 @@ SELECT SYSTEM$GET_SERVICE_STATUS('echo_service');
 DESCRIBE SERVICE echo_service;
 ```
 
-🚨 Get the latest endpoint URL 🚨
+### 🚨 Get the latest endpoint URL 🚨
 
 A very important step - if you haven't redeployed and you're using your old version you might get 405 Method Not Allowed because you're not using the latest version:
 
@@ -51,7 +66,7 @@ A very important step - if you haven't redeployed and you're using your old vers
 SHOW ENDPOINTS IN SERVICE echo_service;
 ```
 
-## Redeploying
+### Redeploying the app
 
 I'm not sure if this is the right way but I couldn't find another way to take the latest container instance so just dropped it and recreated it. In the future we could probably use blue/green with a dns to route traffic so zero downtime.
 
@@ -61,7 +76,7 @@ DROP SERVICE IF EXISTS echo_service;
 # CREATE ... (see above)
 ```
 
-## Pause and resume
+### Pause and resume
 
 Should you want to for some reason pause and resume it:
 
@@ -73,7 +88,29 @@ ALTER SERVICE echo_service RESUME;
 SHOW ENDPOINTS IN SERVICE echo_service;
 ```
 
-## Function
+## Testing the app
+
+Open [python-client-demo/main.py](python-client-demo/main.py) and update the params at the top.
+
+```
+SNOWFLAKE_USERNAME = "todo@example.com"
+SNOWFLAKE_PASSWORD = 'TODO'
+SNOWFLAKE_ACCOUNT = "TODO.eu-west-1"
+
+# Note: this changes after each deployment
+# Use the following SQL to get the endpoint:
+# > SHOW ENDPOINTS IN SERVICE echo_service;
+SNOWFLAKE_SPCS_INGRESS_URL = "TODO"
+```
+
+Execute the script. You should not be asked to login because `token` contains the credentials.
+
+```
+cd python-client-demo
+python3 ./main.py
+```
+
+## Taking it further
 
 Should you wish to get way more advanced and make this callable in Snowflake SQL itself:
 
@@ -88,8 +125,10 @@ CREATE FUNCTION my_echo_udf (InputText varchar)
 SELECT my_echo_udf('hello world!');
 ```
 
-## Related Links
+## Links
 
-- [Connect to API service endpoint, hosted in Snowpark Containers using Snowpark][1]
+- [Tutorial 1 - Create a Snowpark Container Services Service][1]
+- [Connect to API service endpoint, hosted in Snowpark Containers using Snowpark][2]
 
-[1]: https://gist.github.com/sfc-gh-vsekar/4d61024cbd9ad8c7d746bc46d55a6090
+[1]: https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/tutorial-1
+[2]: https://gist.github.com/sfc-gh-vsekar/4d61024cbd9ad8c7d746bc46d55a6090

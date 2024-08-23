@@ -6,7 +6,8 @@ SNOWFLAKE_PASSWORD = 'TODO'
 SNOWFLAKE_ACCOUNT = "TODO.eu-west-1"
 
 # Note: this changes after each deployment
-# SHOW ENDPOINTS IN SERVICE echo_service;
+# Use the following SQL to get the endpoint:
+# > SHOW ENDPOINTS IN SERVICE echo_service;
 SNOWFLAKE_SPCS_INGRESS_URL = "" 
 
 def get(url):
