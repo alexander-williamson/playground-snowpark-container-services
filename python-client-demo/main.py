@@ -27,6 +27,7 @@ def get_token():
    user=SNOWFLAKE_USERNAME,# username
    password=SNOWFLAKE_PASSWORD, # insert password here
    account=SNOWFLAKE_ACCOUNT,
+   server_session_keep_alive=true, # keep the session around to avoid 404s
    session_parameters={
       'PYTHON_CONNECTOR_QUERY_RESULT_FORMAT': 'json'
    })
