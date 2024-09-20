@@ -125,6 +125,10 @@ CREATE FUNCTION my_echo_udf (InputText varchar)
 SELECT my_echo_udf('hello world!');
 ```
 
+## 404 Not Found
+
+This can be caused by 'server_session_keep_alive' not being set to 'true' in the connector initialisation parameters. Many thanks to Thanos Bantis for this suggestion.
+
 ## Links
 
 - [Tutorial 1 - Create a Snowpark Container Services Service][1]
